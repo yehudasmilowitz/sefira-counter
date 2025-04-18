@@ -1,0 +1,16 @@
+{
+  "name": "Sefira Counter",
+  "short_name": "Sefira",
+  "description": "Track your Omer count with daily kabbalistic insights",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+} 
