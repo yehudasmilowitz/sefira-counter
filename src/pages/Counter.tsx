@@ -6,7 +6,7 @@ import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon } from '@heroic
 import LocationInfo from '../components/LocationInfo';
 
 const Counter = () => {
-    const { dayCount, hebrewText, englishText, location, sunsetTime } = useOmerCount();
+    const { dayCount, hebrewText, englishText, sunsetTime } = useOmerCount();
     const [insight, setInsight] = useState<KabbalisticDay | null>(null);
 
     useEffect(() => {

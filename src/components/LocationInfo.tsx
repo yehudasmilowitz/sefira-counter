@@ -32,11 +32,13 @@ const LocationInfo = () => {
                         });
                         setLoading(false);
                     } catch (err) {
+                        console.error('Error fetching location details:', err);
                         setError('Failed to fetch location details');
                         setLoading(false);
                     }
                 },
                 (err) => {
+                    console.error('Error getting location:', err);
                     setError('Unable to get location');
                     setLoading(false);
                 }
