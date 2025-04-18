@@ -1,19 +1,55 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useOmerCount } from '../hooks/useOmerCount';
 import { getKabbalisticInsight, KabbalisticDay } from '../utils/kabbalisticInsights';
-import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import LocationInfo from '../components/LocationInfo';
+import { CountedDaysProgress } from '../components/CountedDaysProgress';
+import { useCountedDays } from '../hooks/useCountedDays';
+import { PreviousDaysStatus } from '../components/PreviousDaysStatus';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 
-const Counter = () => {
-    const { dayCount, hebrewText, englishText, sunsetTime } = useOmerCount();
+export const Counter: React.FC = () => {
+    const { dayCount, hebrewText, englishText, sunsetTime, isLoading } = useOmerCount();
+    const { countedDays, isLoaded, isDayCounted, toggleDayCounted } = useCountedDays();
     const [insight, setInsight] = useState<KabbalisticDay | null>(null);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [confettiPosition, setConfettiPosition] = useState({ x: 0, y: 0 });
+    const { width, height } = useWindowSize();
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if (dayCount > 0) {
             setInsight(getKabbalisticInsight(dayCount));
         }
     }, [dayCount]);
+
+    const handleCountClick = () => {
+        const wasCounted = isDayCounted(dayCount);
+        toggleDayCounted(dayCount);
+
+        if (!wasCounted && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setConfettiPosition({
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            });
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 5000);
+        }
+    };
+
+    if (isLoading || !isLoaded) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+                    <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <motion.div
@@ -22,11 +58,38 @@ const Counter = () => {
             exit={{ opacity: 0, y: -20 }}
             className="container mx-auto px-4 py-4"
         >
+            {showConfetti && (
+                <Confetti
+                    width={width}
+                    height={height}
+                    recycle={false}
+                    numberOfPieces={200}
+                    gravity={0.3}
+                    initialVelocityX={10}
+                    initialVelocityY={10}
+                    confettiSource={{
+                        x: confettiPosition.x,
+                        y: confettiPosition.y,
+                        w: 10,
+                        h: 10
+                    }}
+                />
+            )}
+
             <LocationInfo />
 
             <div className="max-w-3xl mx-auto w-full mt-4">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
                     <div className="flex flex-col space-y-4">
+                        {/* Previous Days Status */}
+                        {dayCount > 1 && (
+                            <PreviousDaysStatus
+                                currentDay={dayCount}
+                                countedDays={countedDays}
+                                onToggleDay={toggleDayCounted}
+                            />
+                        )}
+
                         {/* Bracha Section */}
                         <div className="text-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl relative overflow-hidden">
                             <div className="absolute -top-4 -right-4 opacity-10">
@@ -63,7 +126,29 @@ const Counter = () => {
                                     Sunset: {sunsetTime}
                                 </div>
                             )}
+
+                            {isLoaded && (
+                                <motion.button
+                                    ref={buttonRef}
+                                    onClick={handleCountClick}
+                                    className={`mt-4 inline-flex items-center px-4 py-2 rounded-lg transition-colors ${isDayCounted(dayCount)
+                                        ? 'bg-green-500 text-white'
+                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                        }`}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <CheckCircleIcon className={`h-5 w-5 mr-2 ${isDayCounted(dayCount)
+                                        ? 'text-white'
+                                        : 'text-gray-500 dark:text-gray-400'
+                                        }`} />
+                                    {isDayCounted(dayCount) ? 'Counted' : 'Mark as Counted'}
+                                </motion.button>
+                            )}
                         </div>
+
+                        {/* Progress Section */}
+                        <CountedDaysProgress countedDays={countedDays} totalDays={49} />
 
                         {/* Kabbalistic Insight Section */}
                         <motion.div

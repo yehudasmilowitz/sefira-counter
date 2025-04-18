@@ -6,6 +6,7 @@ interface OmerCount {
   englishText: string;
   location: string;
   sunsetTime: string;
+  isLoading: boolean;
 }
 
 // Full proper Hebrew text for each day of the Omer
@@ -62,14 +63,16 @@ const hebrewOmerTexts: { [key: number]: string } = {
 };
 
 export const useOmerCount = (): OmerCount => {
-  const [dayCount, setDayCount] = useState(0);
+  const [dayCount, setDayCount] = useState<number>(0);
   const [location, setLocation] = useState('Loading...');
-  const [sunsetTime, setSunsetTime] = useState('Loading...');
+  const [sunsetTime, setSunsetTime] = useState<string>('Loading...');
   const [sunsetDate, setSunsetDate] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getLocation = async () => {
       try {
+        setIsLoading(true);
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject);
         });
@@ -87,6 +90,8 @@ export const useOmerCount = (): OmerCount => {
         console.error('Error getting location:', error);
         setLocation('Location unavailable');
         setSunsetTime('Sunset time unavailable');
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -195,5 +200,6 @@ export const useOmerCount = (): OmerCount => {
     englishText: dayCount > 0 ? getEnglishCount(dayCount) : "No counting today",
     location,
     sunsetTime,
+    isLoading,
   };
 }; 
