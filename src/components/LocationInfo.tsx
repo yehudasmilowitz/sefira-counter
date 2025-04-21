@@ -24,7 +24,7 @@ const LocationInfo = () => {
                         );
                         const data = await response.json();
                         setLocation({
-                            city: data.city,
+                            city: data.locality || data.city,
                             state: data.principalSubdivision,
                             country: data.countryName,
                             latitude: position.coords.latitude,
