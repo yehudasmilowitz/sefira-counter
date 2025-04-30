@@ -5,12 +5,11 @@ import { getKabbalisticInsight, KabbalisticDay } from '../utils/kabbalisticInsig
 import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon, CheckCircleIcon, MapPinIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import LocationInfo from '../components/LocationInfo';
 import { useCountedDays } from '../hooks/useCountedDays';
-import { PreviousDaysStatus } from '../components/PreviousDaysStatus';
 import confetti from 'canvas-confetti';
 
 export const Counter: React.FC = () => {
     const { dayCount, hebrewText, englishText, sunsetTime, isLoading, error } = useOmerCount();
-    const { countedDays, isLoaded, isDayCounted, toggleDayCounted } = useCountedDays();
+    const { isLoaded, isDayCounted, toggleDayCounted } = useCountedDays();
     const [insight, setInsight] = useState<KabbalisticDay | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -154,15 +153,6 @@ export const Counter: React.FC = () => {
             <div className="max-w-3xl mx-auto w-full mt-4">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
                     <div className="flex flex-col space-y-4">
-                        {/* Previous Days Status */}
-                        {/* {dayCount > 1 && (
-                            <PreviousDaysStatus
-                                currentDay={dayCount}
-                                countedDays={countedDays}
-                                onToggleDay={toggleDayCounted}
-                            />
-                        )} */}
-
                         {/* Bracha Section */}
                         <div className="text-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl relative overflow-hidden">
                             <div className="absolute -top-4 -right-4 opacity-10">
