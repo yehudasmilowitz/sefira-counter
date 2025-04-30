@@ -7,16 +7,12 @@ import LocationInfo from '../components/LocationInfo';
 import { CountedDaysProgress } from '../components/CountedDaysProgress';
 import { useCountedDays } from '../hooks/useCountedDays';
 import { PreviousDaysStatus } from '../components/PreviousDaysStatus';
-import Confetti from 'react-confetti';
-import { useWindowSize } from 'react-use';
+import confetti from 'canvas-confetti';
 
 export const Counter: React.FC = () => {
     const { dayCount, hebrewText, englishText, sunsetTime, isLoading, error } = useOmerCount();
     const { countedDays, isLoaded, isDayCounted, toggleDayCounted } = useCountedDays();
     const [insight, setInsight] = useState<KabbalisticDay | null>(null);
-    const [showConfetti, setShowConfetti] = useState(false);
-    const [confettiPosition, setConfettiPosition] = useState({ x: 0, y: 0 });
-    const { width, height } = useWindowSize();
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -29,14 +25,30 @@ export const Counter: React.FC = () => {
         const wasCounted = isDayCounted(dayCount);
         toggleDayCounted(dayCount);
 
-        if (!wasCounted && buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            setConfettiPosition({
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
+        if (!wasCounted) {
+            // Left burst
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: 0, y: 0.5 },
+                angle: 60,
+                startVelocity: 45,
+                gravity: 0.5,
+                ticks: 200,
+                colors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF']
             });
-            setShowConfetti(true);
-            setTimeout(() => setShowConfetti(false), 5000);
+
+            // Right burst
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: 1, y: 0.5 },
+                angle: 120,
+                startVelocity: 45,
+                gravity: 0.5,
+                ticks: 200,
+                colors: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF']
+            });
         }
     };
 
@@ -138,24 +150,6 @@ export const Counter: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="container mx-auto px-4 py-4"
         >
-            {showConfetti && (
-                <Confetti
-                    width={width}
-                    height={height}
-                    recycle={false}
-                    numberOfPieces={200}
-                    gravity={0.3}
-                    initialVelocityX={10}
-                    initialVelocityY={10}
-                    confettiSource={{
-                        x: confettiPosition.x,
-                        y: confettiPosition.y,
-                        w: 10,
-                        h: 10
-                    }}
-                />
-            )}
-
             <LocationInfo />
 
             <div className="max-w-3xl mx-auto w-full mt-4">
@@ -207,24 +201,26 @@ export const Counter: React.FC = () => {
                                 </div>
                             )}
 
-                            {isLoaded && (
-                                <motion.button
-                                    ref={buttonRef}
-                                    onClick={handleCountClick}
-                                    className={`mt-4 inline-flex items-center px-4 py-2 rounded-lg transition-colors ${isDayCounted(dayCount)
-                                        ? 'bg-green-500 text-white'
-                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                                        }`}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <CheckCircleIcon className={`h-5 w-5 mr-2 ${isDayCounted(dayCount)
-                                        ? 'text-white'
-                                        : 'text-gray-500 dark:text-gray-400'
-                                        }`} />
-                                    {isDayCounted(dayCount) ? 'Counted' : 'Mark as Counted'}
-                                </motion.button>
-                            )}
+                            <div className="mt-4">
+                                {isLoaded && (
+                                    <motion.button
+                                        ref={buttonRef}
+                                        onClick={handleCountClick}
+                                        className={`w-56 mx-auto inline-flex items-center justify-center px-6 py-3 rounded-lg transition-colors ${isDayCounted(dayCount)
+                                            ? 'bg-green-500 text-white'
+                                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                            }`}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <CheckCircleIcon className={`h-5 w-5 mr-2 ${isDayCounted(dayCount)
+                                            ? 'text-white'
+                                            : 'text-gray-500 dark:text-gray-400'
+                                            }`} />
+                                        {isDayCounted(dayCount) ? 'Counted' : 'Mark as Counted'}
+                                    </motion.button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Progress Section */}
