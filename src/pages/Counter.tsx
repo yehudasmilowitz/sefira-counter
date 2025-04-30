@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useOmerCount } from '../hooks/useOmerCount';
 import { getKabbalisticInsight, KabbalisticDay } from '../utils/kabbalisticInsights';
-import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon, CheckCircleIcon, MapPinIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import LocationInfo from '../components/LocationInfo';
 import { CountedDaysProgress } from '../components/CountedDaysProgress';
 import { useCountedDays } from '../hooks/useCountedDays';
@@ -11,7 +11,7 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
 export const Counter: React.FC = () => {
-    const { dayCount, hebrewText, englishText, sunsetTime, isLoading } = useOmerCount();
+    const { dayCount, hebrewText, englishText, sunsetTime, isLoading, error } = useOmerCount();
     const { countedDays, isLoaded, isDayCounted, toggleDayCounted } = useCountedDays();
     const [insight, setInsight] = useState<KabbalisticDay | null>(null);
     const [showConfetti, setShowConfetti] = useState(false);
@@ -48,6 +48,86 @@ export const Counter: React.FC = () => {
                     <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
                 </div>
             </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="container mx-auto px-4 py-8"
+            >
+                <div className="max-w-3xl mx-auto">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6">
+                        <div className="text-center">
+                            <MapPinIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Location Required
+                            </h2>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                {error.message}
+                            </p>
+                        </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                                Dvar Torah: The Importance of Location
+                            </h3>
+                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                {error.dvarTorah}
+                            </p>
+                        </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                                How to Enable Location Access
+                            </h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Chrome / Edge:</h4>
+                                    <ol className="list-decimal list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                                        <li>Click the lock icon in the address bar</li>
+                                        <li>Click "Site settings"</li>
+                                        <li>Find "Location" and change it to "Allow"</li>
+                                        <li>Refresh this page</li>
+                                    </ol>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Safari:</h4>
+                                    <ol className="list-decimal list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                                        <li>Click "Safari" in the menu bar</li>
+                                        <li>Go to "Settings" → "Websites"</li>
+                                        <li>Select "Location" on the left</li>
+                                        <li>Find this website and change to "Allow"</li>
+                                        <li>Refresh this page</li>
+                                    </ol>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Firefox:</h4>
+                                    <ol className="list-decimal list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                                        <li>Click the lock icon in the address bar</li>
+                                        <li>Click "Connection" → "More Information"</li>
+                                        <li>Go to "Permissions" tab</li>
+                                        <li>Find "Access your location" and click "Allow"</li>
+                                        <li>Refresh this page</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="text-center">
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                                <ArrowPathIcon className="h-4 w-4 mr-2" />
+                                Refresh Page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
         );
     }
 

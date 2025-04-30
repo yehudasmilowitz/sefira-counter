@@ -7,6 +7,10 @@ interface OmerCount {
   location: string;
   sunsetTime: string;
   isLoading: boolean;
+  error?: {
+    message: string;
+    dvarTorah: string;
+  };
 }
 
 // Full proper Hebrew text for each day of the Omer
@@ -68,6 +72,7 @@ export const useOmerCount = (): OmerCount => {
   const [sunsetTime, setSunsetTime] = useState<string>('Loading...');
   const [sunsetDate, setSunsetDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<{ message: string; dvarTorah: string } | undefined>();
 
   useEffect(() => {
     const getLocation = async () => {
@@ -86,8 +91,13 @@ export const useOmerCount = (): OmerCount => {
         
         const day = calculateOmerDay(sunset);
         setDayCount(day);
+        setError(undefined);
       } catch (error) {
         console.error('Error getting location:', error);
+        setError({
+          message: 'Location access is required to determine the correct day of the Omer.',
+          dvarTorah: `The Sefirah period teaches us about the journey from יציאת מצרים (Exodus) to מתן תורה (Receiving the Torah). Just as the Jewish people needed to know their location in the desert to receive the Torah at the right time, we too need to know our location to count the Omer at the proper time. By sharing your location, you're participating in the mitzvah of ספירת העומר with the same precision that our ancestors used in the desert.`
+        });
         setLocation('Location unavailable');
         setSunsetTime('Sunset time unavailable');
       } finally {
@@ -212,5 +222,6 @@ export const useOmerCount = (): OmerCount => {
     location,
     sunsetTime,
     isLoading,
+    error
   };
 }; 
