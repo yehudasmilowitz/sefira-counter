@@ -4,7 +4,6 @@ import { useOmerCount } from '../hooks/useOmerCount';
 import { getKabbalisticInsight, KabbalisticDay } from '../utils/kabbalisticInsights';
 import { SparklesIcon, LightBulbIcon, CalendarIcon, BookOpenIcon, CheckCircleIcon, MapPinIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import LocationInfo from '../components/LocationInfo';
-import { CountedDaysProgress } from '../components/CountedDaysProgress';
 import { useCountedDays } from '../hooks/useCountedDays';
 import { PreviousDaysStatus } from '../components/PreviousDaysStatus';
 import confetti from 'canvas-confetti';
@@ -156,13 +155,13 @@ export const Counter: React.FC = () => {
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
                     <div className="flex flex-col space-y-4">
                         {/* Previous Days Status */}
-                        {dayCount > 1 && (
+                        {/* {dayCount > 1 && (
                             <PreviousDaysStatus
                                 currentDay={dayCount}
                                 countedDays={countedDays}
                                 onToggleDay={toggleDayCounted}
                             />
-                        )}
+                        )} */}
 
                         {/* Bracha Section */}
                         <div className="text-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl relative overflow-hidden">
@@ -180,7 +179,6 @@ export const Counter: React.FC = () => {
                                 Blessed are You, Lord our God, King of the Universe, who has sanctified us with His commandments and commanded us concerning the counting of the Omer.
                             </div>
                         </div>
-
                         {/* Day Count Section */}
                         <div className="text-center relative p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
                             <motion.div
@@ -224,7 +222,17 @@ export const Counter: React.FC = () => {
                         </div>
 
                         {/* Progress Section */}
-                        <CountedDaysProgress countedDays={countedDays} totalDays={49} />
+                        <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl">
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                                Progress: {dayCount} / 49 Days
+                            </h3>
+                            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                <div
+                                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out"
+                                    style={{ width: `${(dayCount / 49) * 100}%` }}
+                                />
+                            </div>
+                        </div>
 
                         {/* Kabbalistic Insight Section */}
                         <motion.div
