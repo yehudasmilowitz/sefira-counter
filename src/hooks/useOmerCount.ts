@@ -135,11 +135,21 @@ export const useOmerCount = (): OmerCount => {
 
   const calculateOmerDay = (sunset: Date): number => {
     const now = new Date();
-    const currentTime = now.getTime();
-    const sunsetTime = sunset.getTime();
 
+    // For Jewish day calculation, if it's after sunset, it's already the next day
     const jewishDay = new Date(now);
-    if (currentTime < sunsetTime) {
+    const localHours = jewishDay.getHours();
+    const localMinutes = jewishDay.getMinutes();
+    const sunsetHours = sunset.getHours();
+    const sunsetMinutes = sunset.getMinutes();
+
+    // Compare local time with sunset time
+    const isAfterSunset = localHours > sunsetHours || 
+                         (localHours === sunsetHours && localMinutes >= sunsetMinutes);
+
+    if (isAfterSunset) {
+      jewishDay.setDate(jewishDay.getDate());
+    } else {
       jewishDay.setDate(jewishDay.getDate() - 1);
     }
     jewishDay.setHours(0, 0, 0, 0);
@@ -157,6 +167,7 @@ export const useOmerCount = (): OmerCount => {
 
     const daysSincePesach =
       Math.floor((jewishDay.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    
     return daysSincePesach > 0 && daysSincePesach <= 49 ? daysSincePesach : 0;
   };
 
