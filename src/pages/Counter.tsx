@@ -300,7 +300,7 @@ export const Counter: React.FC = () => {
 
                             {insight ? (
                                 <div className="prose dark:prose-invert max-w-none text-sm">
-                                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{insight.dvarTorah}</p>
+                                    <pre className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-sans">{insight.dvarTorah}</pre>
                                 </div>
                             ) : (
                                 <p className="text-gray-700 dark:text-gray-300">Loading dvar Torah...</p>
